@@ -288,12 +288,12 @@ def getFreqMatrix(fileName, populations):
 
 def computeAndWriteKinship(freqs, nsnp, popNames, keepOG, filePrefix, myMap, snpIdx):
     LOGGER.info("Computing Reynolds distances and heterozygosity")
-    snp_subset = snpIdx
+    snp_subset = np.asarray(snpIdx)
     if nsnp < len(snpIdx):
         ## TODO: be careful with the indexes monomorfic SNPs (filter them before)
         pbinom = float(nsnp)/len(snpIdx)
-        snp_subset = np.array(np.random.binomial(1,pbinom,len(snpIdx)),dtype=bool)
-        snp_subset = snpIdx[snp_subset]
+        subset = np.array(np.random.binomial(1,pbinom,len(snpIdx)),dtype=bool)
+        snp_subset = snp_subset[subset]
     reynolds_dist = popgen.reynolds(freqs[:,snpIdx])
     heteroZ = popgen.heterozygosity(freqs[:,snpIdx])
     writeFreqs(freqs[:,snpIdx], [myMap[i] for i in snpIndx], popNames, filePrefix+"-reynolds")
