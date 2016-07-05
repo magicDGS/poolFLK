@@ -296,7 +296,7 @@ def computeAndWriteKinship(freqs, nsnp, popNames, keepOG, filePrefix, myMap, snp
         snp_subset = snp_subset[subset]
     reynolds_dist = popgen.reynolds(freqs[:,snpIdx])
     heteroZ = popgen.heterozygosity(freqs[:,snpIdx])
-    writeFreqs(freqs[:,snpIdx], [myMap[i] for i in snpIndx], popNames, filePrefix+"-reynolds")
+    writeFreqs(freqs[:,snp_subset], [myMap[i] for i in snp_subset], popNames, filePrefix+"-reynolds")
     
     LOGGER.info("Computing Kinship Matrix")
     fij = popgen.popKinship_new(reynolds_dist,popNames,options.outgroup, keep_outgroup = keepOG, hzy = heteroZ)
