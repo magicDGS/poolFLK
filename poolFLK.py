@@ -350,7 +350,10 @@ if __name__=='__main__':
     if options.debug:
         LOGGER.setLevel(logging.DEBUG)
         LOGGER.debug("debug mode")
+    else:
+        LOGGER.setLevel(logging.INFO)
 
+    LOGGER.info("Starting")
     populations, popNames = getPopulationInfo(options.sync, options.pops, options.pop_names)
     freqMatrix, myMap, snpIndx = getFreqMatrix(options.sync, populations)
     ## TODO: check if it is correct
