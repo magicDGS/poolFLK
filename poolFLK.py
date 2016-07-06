@@ -299,8 +299,8 @@ def computeAndWriteKinship(freqs, nsnp, popNames, keepOG, filePrefix, myMap, snp
     writeFreqs(freqs[:,snp_subset], [myMap[i] for i in snp_subset], popNames, filePrefix+"-reynolds")
     
     LOGGER.info("Computing Kinship Matrix")
-    fij = popgen.popKinship_new(reynolds_dist,popNames,options.outgroup, keep_outgroup = keepOG, hzy = heteroZ)
-    filename = filePrefix + "_fij.txt"
+    fij = popgen.popKinship_new(reynolds_dist, popNames, outgroup = options.outgroup, fprefix=filePrefix, keep_outgroup = keepOG, hzy = heteroZ)
+    filename = filePrefix + "_fij2.txt"
     fout=open(filename,'w')
     for i in range(fij.shape[0]):
         tw=[popNames[i]]
