@@ -19,7 +19,7 @@ def getCommandLineParser():
     # some options
     parser.add_argument('--version', help='print the version and exits', default=False, action='store_true')
     parser.add_argument('-p','--prefix',dest='prefix',help='prefix for output files',default='hapflk')
-    parser.add_argument('--only-kinship', dest='only_kinship' help='Perform only the Kinship Matrix estimation', default=False, action='store_true')
+    parser.add_argument('--only-kinship', dest='only_kinship', help='Perform only the Kinship Matrix estimation', default=False, action='store_true')
     parser.add_argument('--debug',help=argparse.SUPPRESS,default=False,action="store_true") ## for debug purpose
     # input options
     io_opts=parser.add_argument_group('Input Files')
