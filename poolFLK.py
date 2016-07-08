@@ -283,7 +283,7 @@ def getFreqMatrix(fileName, populations, min_freq):
         frqs.append(alleleFreqs[:,0])
         myMap.append(SNP(record.chr, record.pos, alleles[0], alleles[1]))
         # filter the ones that could be used for reynolds distance
-        allFreq = totalSum[indexes]/np.sum(a[indexes])[0]
+        allFreq = totalSum[indexes]/np.sum(totalSum[indexes])[0]
         if allFreq <= min_freq:
             snpIndx.append(indx)
         indx += 1
