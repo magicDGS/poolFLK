@@ -276,9 +276,10 @@ def getFreqMatrix(fileName, populations, min_freq):
         # two major alleles indexes
         # indexes = np.argpartition(totalSum, 1)[len(sync_bases)-2:]
         indexes = map(totalSum.tolist().index, heapq.nlargest(2, totalSum)[::-1])
+        LOGGER.debug("indexes = %s", indexes)
         ## get biallelic
         biallelic = totalCounts[:,indexes]
-        LOGGER.debug("biallelic = %s", totalSum)
+        LOGGER.debug("biallelic = %s", biallelic)
         ## get the alleles
         alleles = [sync_bases[x] for x in indexes]
         alleleFreqs = biallelic.astype(float) / np.sum(biallelic,1)[:,None]
@@ -286,7 +287,7 @@ def getFreqMatrix(fileName, populations, min_freq):
         myMap.append(SNP(record.chr, record.pos, alleles[0], alleles[1]))
         # filter the ones that could be used for reynolds distance
         allFreq = totalSum[indexes]/np.sum(totalSum[indexes])[0]
-        LOGGER.debug("allFreq = %s", totalSum)
+        LOGGER.debug("allFreq = %s", allFreq)
         if allFreq <= min_freq:
             snpIndx.append(indx)
         indx += 1
