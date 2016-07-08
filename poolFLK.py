@@ -29,7 +29,7 @@ def getCommandLineParser():
     # flk options
     flk_opts=parser.add_argument_group('Population kinship ','Set parameters for getting the population kinship matrix')
     flk_opts.add_argument('--reynolds-snps',dest='reysnps',type=int,help='Number of SNPs to use to estimate Reynolds distances',default=10000,metavar='L')
-    flk_opts.add_argument('--min-freq', dest='minfreq', type=float, help='Minimum allele frequency of SNPs to use to estimate Reynolds distances', default=0.01,metavar='F')
+    flk_opts.add_argument('--min-freq', dest='minfreq', type=float, help='Minimum allele frequency (non inclusive) of SNPs to use to estimate Reynolds distances', default=0.01,metavar='F')
     flk_opts.add_argument('--outgroup',default=None,help='Use population POP as outgroup for tree rooting (if None, use midpoint rooting)',metavar="POP")
     flk_opts.add_argument('--keep-outgroup',dest='keepOG',default=False,help='Keep outgroup in population set',action="store_true")
     pop_group=parser.add_argument_group('SNP/Population selection','Filter SNP/populations')
@@ -288,7 +288,7 @@ def getFreqMatrix(fileName, populations, min_freq):
         # filter the ones that could be used for reynolds distance
         allFreq = (totalSum[indexes]/float(np.sum(totalSum[indexes])))[0]
         LOGGER.debug("allFreq = %s", allFreq)
-        if allFreq <= min_freq:
+        if allFreq > min_freq:
             snpIndx.append(indx)
         indx += 1
     return np.transpose(np.vstack(frqs)), myMap, snpIndx
@@ -356,6 +356,9 @@ if __name__=='__main__':
         LOGGER.debug("debug mode")
     else:
         LOGGER.setLevel(logging.INFO)
+    if options.minfreq < 0:
+        LOGGER.warning("No minimum frequency filter will be applied")
+        options.minfreq = 0
 
     LOGGER.info("Starting")
     populations, popNames = getPopulationInfo(options.sync, options.pops, options.pop_names)
