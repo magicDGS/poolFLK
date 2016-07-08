@@ -29,6 +29,7 @@ def getCommandLineParser():
     # flk options
     flk_opts=parser.add_argument_group('Population kinship ','Set parameters for getting the population kinship matrix')
     flk_opts.add_argument('--reynolds-snps',dest='reysnps',type=int,help='Number of SNPs to use to estimate Reynolds distances',default=10000,metavar='L')
+    flk_opts.add_argument('--min-freq', dest='minfreq', type=float, help='Minimum allele frequency of SNPs to use to estimate Reynolds distances', default=0.01,metavar='F')
     flk_opts.add_argument('--outgroup',default=None,help='Use population POP as outgroup for tree rooting (if None, use midpoint rooting)',metavar="POP")
     flk_opts.add_argument('--keep-outgroup',dest='keepOG',default=False,help='Keep outgroup in population set',action="store_true")
     pop_group=parser.add_argument_group('SNP/Population selection','Filter SNP/populations')
@@ -252,7 +253,7 @@ def getPopulationInfo(fileName, popList, popNamesFile = None):
     return populations, popNames
 
 
-def getFreqMatrix(fileName, populations):
+def getFreqMatrix(fileName, populations, min_freq):
     LOGGER.info("Loading allele frequencies for %s populations", len(populations))
     reader = SyncReader(fileName)
     sync_bases = ['A', 'T', 'C', 'G']
@@ -281,7 +282,9 @@ def getFreqMatrix(fileName, populations):
         alleleFreqs = biallelic.astype(float) / np.sum(biallelic,1)[:,None]
         frqs.append(alleleFreqs[:,0])
         myMap.append(SNP(record.chr, record.pos, alleles[0], alleles[1]))
-        if np.sum(alleleFreqs == 0) != len(populations):
+        # filter the ones that could be used for reynolds distance
+        allFreq = totalSum[indexes]/np.sum(a[indexes])[0]
+        if allFreq <= min_freq:
             snpIndx.append(indx)
         indx += 1
     return np.transpose(np.vstack(frqs)), myMap, snpIndx
@@ -355,7 +358,7 @@ if __name__=='__main__':
 
     LOGGER.info("Starting")
     populations, popNames = getPopulationInfo(options.sync, options.pops, options.pop_names)
-    freqMatrix, myMap, snpIndx = getFreqMatrix(options.sync, populations)
+    freqMatrix, myMap, snpIndx = getFreqMatrix(options.sync, populations, options.minfreq)
     ## TODO: check if it is correct
     LOGGER.info("Loaded %s SNPs (%s polymorphic)", freqMatrix.shape[1], len(snpIndx))
     ## get hte kinship matrix
