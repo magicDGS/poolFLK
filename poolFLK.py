@@ -23,7 +23,7 @@ def getCommandLineParser():
     parser.add_argument('--debug',help=argparse.SUPPRESS,default=False,action="store_true") ## for debug purpose
     # input options
     io_opts=parser.add_argument_group('Input Files')
-    io_opts.add_argument('--sync',metavar='FILE.sync',help='Synchronized population file (gzipped or not)')
+    io_opts.add_argument('--sync',metavar='FILE.sync',help='Synchronized population file (gzipped or not)', required = True)
     io_opts.add_argument('--pop_names',metavar='FILE',help='Population names in one column for the synchronized file.', default=None)
     io_opts.add_argument('--kinship',help='Read population kinship from file (if None, kinship is estimated)',metavar='FILE',default=None)
     # flk options
@@ -347,9 +347,6 @@ if __name__=='__main__':
     if options.version:
         print VERSION
         sys.exit(0)
-    if not options.sync:
-        myparser.print_help()
-        sys.exit(1)
     if options.debug:
         LOGGER.setLevel(logging.DEBUG)
         LOGGER.debug("debug mode")
