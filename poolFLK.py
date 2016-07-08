@@ -19,7 +19,7 @@ def getCommandLineParser():
     # some options
     parser.add_argument('--version', help='print the version and exits', default=False, action='store_true')
     parser.add_argument('-p','--prefix',dest='prefix',help='prefix for output files',default='hapflk')
-    parser.add_argument('--only_kinship', help='Perform only the Kinship Matrix estimation', default=False, action='store_true')
+    parser.add_argument('--only-kinship', dest='only_kinship' help='Perform only the Kinship Matrix estimation', default=False, action='store_true')
     parser.add_argument('--debug',help=argparse.SUPPRESS,default=False,action="store_true") ## for debug purpose
     # input options
     io_opts=parser.add_argument_group('Input Files')
@@ -28,7 +28,7 @@ def getCommandLineParser():
     io_opts.add_argument('--kinship',help='Read population kinship from file (if None, kinship is estimated)',metavar='FILE',default=None)
     # flk options
     flk_opts=parser.add_argument_group('Population kinship ','Set parameters for getting the population kinship matrix')
-    flk_opts.add_argument('--reynolds-snps',dest='reysnps',type=int,help='Number of SNPs to use to estimate Reynolds distances',default=10000,metavar='L')
+    flk_opts.add_argument('--reynolds-snps',dest='reysnps',type=int,help='Number of SNPs (approx.) to use to estimate Reynolds distances',default=10000,metavar='L')
     flk_opts.add_argument('--min-freq', dest='minfreq', type=float, help='Minimum allele frequency (non inclusive) of SNPs to use to estimate Reynolds distances', default=0.01,metavar='F')
     flk_opts.add_argument('--outgroup',default=None,help='Use population POP as outgroup for tree rooting (if None, use midpoint rooting)',metavar="POP")
     flk_opts.add_argument('--keep-outgroup',dest='keepOG',default=False,help='Keep outgroup in population set',action="store_true")
@@ -303,11 +303,11 @@ def computeAndWriteKinship(freqs, nsnp, popNames, keepOG, filePrefix, myMap, snp
         snp_subset = snp_subset[subset]
     reynolds_dist = popgen.reynolds(freqs[:,snp_subset])
     heteroZ = popgen.heterozygosity(freqs[:,snp_subset])
-    writeFreqs(freqs[:,snp_subset], [myMap[i] for i in snp_subset], popNames, filePrefix+"-reynolds")
+    writeFreqs(freqs[:,snp_subset], [myMap[i] for i in snp_subset], popNames, filePrefix+"-reynolds-SNPs")
     
     LOGGER.info("Computing Kinship Matrix")
-    fij = popgen.popKinship_new(reynolds_dist, popNames, outgroup = options.outgroup, fprefix=filePrefix, keep_outgroup = keepOG, hzy = heteroZ)
-    filename = filePrefix + "_fij2.txt"
+    fij = popgen.popKinship_new(reynolds_dist, popNames, outgroup = options.outgroup, keep_outgroup = keepOG, hzy = heteroZ)
+    filename = filePrefix + "_fij.txt"
     fout=open(filename,'w')
     for i in range(fij.shape[0]):
         tw=[popNames[i]]
